@@ -3,8 +3,8 @@ import sys
 import random
 
 
-
-
+#gamepath = "./Montag/game/"
+gamepath = ".\Montag\game\\"
 class PingPong:
     def __init__(self):
         pygame.init()
@@ -21,9 +21,9 @@ class PingPong:
         self.ballwidth = 20
         self.ballheight = self.ballwidth
 
-        self.sap_logo = pygame.image.load("Montag\game\sap-logo.png")
+        self.sap_logo = pygame.image.load(gamepath + "sap-logo.png")
         self.sap_logo = pygame.transform.scale(self.sap_logo,(120,40))
-        self.hit_sound = pygame.mixer.Sound("Montag\game\hitsound.mp3")
+        self.hit_sound = pygame.mixer.Sound(gamepath + "hitsound.mp3")
 
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         pygame.display.set_caption("PingPong")
@@ -52,7 +52,6 @@ class PingPong:
         while running:
             window.fill(self.BACKGROUND_COLOR)
             #Event Checking
-            
             for event in pygame.event.get():
                 #verlassen
                 if event.type == pygame.QUIT:
@@ -86,8 +85,20 @@ class PingPong:
             if ball_react.top <= 0 or ball_react.bottom >= self.SCREEN_HEIGHT:
                 ball_dy = -ball_dy
             #wenn ball auserhalb
-            if ball_react.x  <= 0:
+            if ball_react.x  <= 27:
                 print("Verloren")
+                speed = 100
+                self.draw_title("Verloren",50,100)
+                while ball_react.x >= 0:
+                    ball_react.x += ball_dx
+                    ball_react.y += ball_dy
+                    pygame.draw.rect(window, self.BUTTON_COLOR, ball_react)
+                    pygame.draw.rect(window, self.BUTTON_COLOR, paddle_react)
+                    pygame.time.Clock().tick(speed)
+                    pygame.display.flip()
+                    if speed >= 5:
+                        speed //= 1.2
+                pygame.time.Clock().tick(1)
                 return None
 
             pygame.draw.rect(window, self.BUTTON_COLOR, paddle_react)
@@ -118,7 +129,6 @@ class PingPong:
         while running:
             window.fill(self.BACKGROUND_COLOR)
             #Event Checking
-            
             for event in pygame.event.get():
                 #verlassen
                 if event.type == pygame.QUIT:
@@ -170,7 +180,7 @@ class PingPong:
     def start_p2(self):
         print("Starting 1v1...")
         self.p2_game()
-    
+
     def generateRandomColorFUN(self):
         return (random.randint(50, 255), random.randint(50, 255), random.randint(50, 255))
 
@@ -178,7 +188,7 @@ class PingPong:
     def randomVariationFUN(self):
         # random value between 0.9 and 1.1
         return random.randint(3, 6)
-    
+
     def fun_game(self):
         width = self.SCREEN_WIDTH
         height = self.SCREEN_HEIGHT
@@ -344,7 +354,7 @@ class PingPong:
 
 class SAP_Logo:
     def __init__(self,SCREEN_WIDTH,SCREEN_HEIGHT,screen) -> None:
-        self.sap_logo = pygame.image.load("Montag\game\sap-logo.png")
+        self.sap_logo = pygame.image.load(gamepath + "sap-logo.png")
         self.sap_logo = pygame.transform.scale(self.sap_logo,(120,40))
         self.SCREEN_WIDTH = SCREEN_WIDTH
         self.SCREEN_HEIGHT = SCREEN_HEIGHT
