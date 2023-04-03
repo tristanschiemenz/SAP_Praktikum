@@ -20,9 +20,6 @@ class PingPong:
         self.paddleheight = 100
         self.ballwidth = 20
         self.ballheight = self.ballwidth
-
-        self.sap_logo = pygame.image.load("Montag\game\sap-logo.png")
-        self.sap_logo = pygame.transform.scale(self.sap_logo,(120,40))
         self.hit_sound = pygame.mixer.Sound("Montag\game\hitsound.mp3")
 
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
