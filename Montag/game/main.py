@@ -5,7 +5,7 @@ import random
 
 
 
-class PingPongMenu:
+class PingPong:
     def __init__(self):
         pygame.init()
 
@@ -23,12 +23,15 @@ class PingPongMenu:
 
         self.sap_logo = pygame.image.load("Montag\game\sap-logo.png")
         self.sap_logo = pygame.transform.scale(self.sap_logo,(120,40))
+        self.hit_sound = pygame.mixer.Sound("Montag\game\hitsound.mp3")
+
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         pygame.display.set_caption("PingPong")
         self.button_heigth = 100
         self.button_width = 300
-        self.training_button = pygame.Rect(self.SCREEN_WIDTH // 2 - (self.button_width // 2), self.SCREEN_HEIGHT // 2 - 50, self.button_width, self.button_heigth)
-        self.p2_button = pygame.Rect((self.SCREEN_WIDTH // 2 - (self.button_width // 2)), self.SCREEN_HEIGHT // 2 - 50 + (self.button_heigth)+20, self.button_width, self.button_heigth)
+        self.training_button = pygame.Rect(self.SCREEN_WIDTH // 2 - (self.button_width // 2), (self.SCREEN_HEIGHT // 2) + (-110), self.button_width, self.button_heigth)
+        self.p2_button = pygame.Rect((self.SCREEN_WIDTH // 2 - (self.button_width // 2)), (self.SCREEN_HEIGHT // 2) + (0), self.button_width, self.button_heigth)
+        self.fun_button = pygame.Rect((self.SCREEN_WIDTH // 2 - (self.button_width // 2)), (self.SCREEN_HEIGHT // 2) + (+110), self.button_width, self.button_heigth)
 
 
     def training_game(self):
@@ -68,6 +71,8 @@ class PingPongMenu:
             ball_react.y += ball_dy
             #ball colider
             if ball_react.colliderect(paddle_react) or ball_react.right >= self.SCREEN_WIDTH:
+                if ball_react.colliderect(paddle_react):
+                    self.hit_sound.play()
                 ball_dx = -ball_dx
                 #schneller werden
                 counter += 1
@@ -139,6 +144,7 @@ class PingPongMenu:
             ball_react.y += ball_dy
             #ball colider
             if ball_react.colliderect(paddle_react_p1) or ball_react.colliderect(paddle_react_p2):
+                self.hit_sound.play()
                 ball_dx = -ball_dx
                 #schneller werden
                 counter += 1
@@ -164,6 +170,131 @@ class PingPongMenu:
     def start_p2(self):
         print("Starting 1v1...")
         self.p2_game()
+    
+    def generateRandomColorFUN(self):
+        return (random.randint(50, 255), random.randint(50, 255), random.randint(50, 255))
+
+
+    def randomVariationFUN(self):
+        # random value between 0.9 and 1.1
+        return random.randint(3, 6)
+    
+    def fun_game(self):
+        width = self.SCREEN_WIDTH
+        height = self.SCREEN_HEIGHT
+
+        screen = pygame.display.set_mode((width, height))
+        clock = pygame.time.Clock()
+        running = True
+
+        RGBMODE = True
+        print(f"RGBMODE is set to {RGBMODE}!")
+        p1w = self.paddlewidth
+        p1h = self.paddleheight
+        p1x = 0
+        p1y = (height/2)-(p1h/2)
+
+        bw = self.ballwidth
+
+        balls = [
+            {
+                "x": (width/2)-(bw/2),
+                "y": (height/2)-(bw/2),
+                "vx": -5,
+                "vy": 0,
+                "color": self.generateRandomColorFUN()
+            }
+        ]
+
+        hits = 0
+        mSpeed = 5
+        mSpeedHits = 0
+
+        color = (255, 255, 255)
+
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+
+            screen.fill("black")
+
+            if hits >= 2:
+                balls.append({
+                    "x": (width/2)-(20/2),
+                    "y": (height/2)-(20/2),
+                    "vx": -5,
+                    "vy": 0,
+                    "color": self.generateRandomColorFUN()
+                })
+                hits = 0
+                print("1 ball added")
+                if (p1h < height):
+                    mSpeed += 0.1
+                    print(f"Movement speed increased to {mSpeed}")
+                    p1h += 5
+                    print(f"Player height increased to {p1h}")
+
+            for ball in balls:
+                ball["x"] += ball["vx"]
+                ball["y"] += ball["vy"]
+
+                print(f"Position {ball['x']}, {ball['y']}")
+
+                if ball["y"] <= 0 or ball["y"] >= height-bw:
+                    ball["vy"] = -ball["vy"]
+
+                if ball["x"] > width-bw:
+                    ball["vx"] = -ball["vx"]
+
+                if ball["x"] <= p1x+p1w and ball["y"] in list(range(int(p1y), int(p1y+p1h))):
+                    self.hit_sound.play()
+                    ball["vx"] = -ball["vx"]
+                    if ball["y"] < p1y + (p1h/2):
+                        ball["vy"] = -self.randomVariationFUN()
+                        hits += 1
+                    elif ball["y"] > p1y + (p1h/2):
+                        ball["vy"] = self.randomVariationFUN()
+                        hits += 1
+                    else:
+                        ball["vy"] = 0
+
+                    if RGBMODE:
+                        ball["color"] = self.generateRandomColorFUN()
+                        color = self.generateRandomColorFUN()
+
+                if ball["x"] <= (0):  # (p1w-5)
+                    # remove ball and another one as punishment
+                    balls.remove(ball)
+                    if len(balls) > 0:
+                        balls.pop(0)
+                        print("2 balls removed")
+                    if len(balls) == 0:
+                        running = False
+                        print("You lost")
+
+                pygame.draw.rect(screen, ball["color"], pygame.Rect(
+                    ball["x"], ball["y"], bw, bw))
+
+            pygame.draw.rect(screen, color, pygame.Rect(p1x, p1y, p1w, p1h))
+
+            keys = pygame.key.get_pressed()
+
+            if keys[pygame.K_w]:
+                if p1y > 0:
+                    p1y -= mSpeed
+            if keys[pygame.K_s]:
+                if (p1y+p1h) < height:
+                    p1y += mSpeed
+
+            pygame.display.flip()
+
+            clock.tick(100)
+
+        # (p1y >= ball["y"] >= (p1y + p1h) |||  ball["y"] in list(range(p1y,p1y+p1h))
+    def start_fun(self):
+        print("Starting Fun...")
+        self.fun_game()
 
     def draw_button(self, button_rect, text):
         pygame.draw.rect(self.screen, self.BUTTON_COLOR, button_rect)
@@ -201,9 +332,13 @@ class PingPongMenu:
                         if self.p2_button.collidepoint(event.pos):
                             self.start_p2()
                             sap_logos.append(SAP_Logo(self.SCREEN_WIDTH,self.SCREEN_HEIGHT, self.screen))
+                        if self.fun_button.collidepoint(event.pos):
+                            self.start_fun()
+                            sap_logos.append(SAP_Logo(self.SCREEN_WIDTH,self.SCREEN_HEIGHT, self.screen))
             self.draw_title("Ping Pong @SAP",50,100)
             self.draw_button(self.training_button, "Trainings Modus")
             self.draw_button(self.p2_button, "1v1 Modus")
+            self.draw_button(self.fun_button, "Spaß Modus")
             pygame.display.flip()
             pygame.time.Clock().tick(60)
 
@@ -231,5 +366,5 @@ class SAP_Logo:
 
 
 if __name__ == "__main__":
-    gamemenu = PingPongMenu()
+    gamemenu = PingPong()
     gamemenu.main()
