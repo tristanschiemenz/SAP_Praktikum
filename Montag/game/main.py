@@ -69,6 +69,7 @@ class PingPong:
             #ball bewegung
             ball_react.x += ball_dx
             ball_react.y += ball_dy
+
             #ball colider
             if ball_react.colliderect(paddle_react) or ball_react.right >= self.SCREEN_WIDTH:
                 if ball_react.colliderect(paddle_react):
@@ -77,6 +78,7 @@ class PingPong:
                 ball_dx = -ball_dx
                 #schneller werden
                 counter += 1
+                
                 #alle 3 pannel berürungung wird es schneller
                 if counter % 6 == 0:
                     ball_dx -= ball_accel
@@ -87,7 +89,7 @@ class PingPong:
             if ball_react.top <= 0 or ball_react.bottom >= self.SCREEN_HEIGHT:
                 ball_dy = -ball_dy
             #wenn ball auserhalb
-            if ball_react.x  <= self.paddlewidth - 3:
+            if ball_react.x  <= self.paddlewidth - 10:
                 self.loose(pcounter, ball_dx, ball_dy, ball_react, paddle_react,window)
                 return None
 
@@ -142,6 +144,7 @@ class PingPong:
             #ball bewegung
             ball_react.x += ball_dx
             ball_react.y += ball_dy
+
             #ball colider
             if ball_react.colliderect(paddle_react_p1) or ball_react.colliderect(paddle_react_p2):
                 self.hit_sound.play()
@@ -150,15 +153,19 @@ class PingPong:
                 counter += 1
                 #alle 3 pannel berürungung wird es schneller
                 if counter % 6 == 0:
-                    ball_dx -= ball_accel
                     if ball_dx > 0:
                         ball_dx += ball_accel
-                    else:
-                        ball_dy-=ball_accel
+                    elif ball_dx < 0:
+                        ball_dx -= ball_accel
+                    if ball_dy > 0:
+                        ball_dy += ball_accel
+                    elif ball_dy < 0:
+                        ball_dy -= ball_accel
             if ball_react.top <= 0 or ball_react.bottom >= self.SCREEN_HEIGHT:
                 ball_dy = -ball_dy
+
             #wenn ball auserhalb
-            if ball_react.x  <= self.paddlewidth - 3 or ball_react.x >= (self.SCREEN_WIDTH - self.paddlewidth) - 17:
+            if ball_react.x  <= self.paddlewidth - 13 or ball_react.x >= (self.SCREEN_WIDTH - self.paddlewidth) - 7:
                 paddle_react = paddle_react_p2
                 if ball_react.x  <= self.paddlewidth - 3:
                     paddle_react = paddle_react_p1
