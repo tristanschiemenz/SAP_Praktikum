@@ -1,10 +1,10 @@
 import pygame
 import sys
 import random
+import time
 
-
-gamepath = ""
-#gamepath = ".\Montag\game\\"
+# gamepath = "."
+gamepath = ".\Montag\game\\"
 class PingPong:
     def __init__(self):
         pygame.init()
@@ -69,7 +69,8 @@ class PingPong:
             #ball bewegung
             ball_react.x += ball_dx
             ball_react.y += ball_dy
-
+            #highscore
+            self.draw_title(f"{pcounter}", 30, 200)
             #ball colider
             if ball_react.colliderect(paddle_react) or ball_react.right >= self.SCREEN_WIDTH:
                 if ball_react.colliderect(paddle_react):
@@ -78,14 +79,17 @@ class PingPong:
                 ball_dx = -ball_dx
                 #schneller werden
                 counter += 1
-                
                 #alle 3 pannel berürungung wird es schneller
                 if counter % 6 == 0:
-                    ball_dx -= ball_accel
+                    paddle_speed += ball_accel
                     if ball_dx > 0:
                         ball_dx += ball_accel
-                    else:
-                        ball_dy-=ball_accel
+                    elif ball_dx < 0:
+                        ball_dx -= ball_accel
+                    if ball_dy > 0:
+                        ball_dy += ball_accel
+                    elif ball_dy < 0:
+                        ball_dy -= ball_accel
             if ball_react.top <= 0 or ball_react.bottom >= self.SCREEN_HEIGHT:
                 ball_dy = -ball_dy
             #wenn ball auserhalb
@@ -144,13 +148,15 @@ class PingPong:
             #ball bewegung
             ball_react.x += ball_dx
             ball_react.y += ball_dy
-
+            #highscore
+            self.draw_title(f"{counter}", 30, 200)
             #ball colider
             if ball_react.colliderect(paddle_react_p1) or ball_react.colliderect(paddle_react_p2):
                 self.hit_sound.play()
                 ball_dx = -ball_dx
                 #schneller werden
                 counter += 1
+                print(counter)
                 #alle 3 pannel berürungung wird es schneller
                 if counter % 6 == 0:
                     if ball_dx > 0:
@@ -200,7 +206,7 @@ class PingPong:
         RGBMODE = True
         print(f"RGBMODE is set to {RGBMODE}!")
         p1w = self.paddlewidth
-        p1h = self.paddleheight
+        p1h = self.paddleheight + 200
         p1x = 0
         p1y = (height/2)-(p1h/2)
 
@@ -350,6 +356,8 @@ class PingPong:
             pygame.display.flip()
             if speed >= 5:
                 speed //= 1.2
+        
+        time.sleep(1)
         pygame.time.Clock().tick(1)
     def main(self):
         running = True
@@ -393,8 +401,8 @@ class SAP_Logo:
         self.screen = screen
         self.image_x = SCREEN_WIDTH // 2
         self.image_y = SCREEN_HEIGHT // 2
-        self.image_dx = 3
-        self.image_dy = 3
+        self.image_dx = random.choice([3,-3])
+        self.image_dy = random.choice([3,-3])
         self.image_react = self.sap_logo.get_rect()
 
     def update_and_draw(self):
