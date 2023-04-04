@@ -158,8 +158,7 @@ class PingPong:
             if ball_react.top <= 0 or ball_react.bottom >= self.SCREEN_HEIGHT:
                 ball_dy = -ball_dy
             #wenn ball auserhalb
-            #TODO: tune right border
-            if ball_react.x  <= self.paddlewidth - 3 or ball_react.x >= (self.SCREEN_WIDTH - self.paddlewidth) - 15:
+            if ball_react.x  <= self.paddlewidth - 3 or ball_react.x >= (self.SCREEN_WIDTH - self.paddlewidth) - 17:
                 paddle_react = paddle_react_p2
                 if ball_react.x  <= self.paddlewidth - 3:
                     paddle_react = paddle_react_p1
