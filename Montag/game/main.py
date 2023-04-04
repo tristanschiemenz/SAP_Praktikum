@@ -211,8 +211,8 @@ class PingPong:
 
         hits = 0
         mSpeed = 5
-        allTimeHighscore = 0
-        currentScore = 0
+        allTimeHighscore = 1
+        currentScore = 1
         mSpeedHits = 0
 
         color = (255, 255, 255)
@@ -254,7 +254,7 @@ class PingPong:
                 if ball["x"] > width-bw:
                     ball["vx"] = -ball["vx"]
 
-                if ball["x"] <= p1x+p1w and ball["y"] in list(range(int(p1y), int(p1y+p1h))):
+                if ball["x"] <= p1x+p1w and ball["y"] in list(range(int(p1y)-20, int(p1y+p1h)+20)):
                     self.hit_sound.play()
                     ball["vx"] = -ball["vx"]
                     if ball["y"] < p1y + (p1h/2):
@@ -270,7 +270,7 @@ class PingPong:
                         ball["color"] = self.generateRandomColorFUN()
                         color = self.generateRandomColorFUN()
 
-                if ball["x"] <= (0):  # (p1w-5)
+                if ball["x"] <= (p1w-1):  # (p1w-5)
                     # remove ball and another one as punishment
                     balls.remove(ball)
                     if len(balls) > 0:
@@ -287,6 +287,8 @@ class PingPong:
                     ball["x"], ball["y"], bw, bw))
 
             pygame.draw.rect(screen, color, pygame.Rect(p1x, p1y, p1w, p1h))
+
+            self.draw_title(f"{currentScore}/ {allTimeHighscore}", 30, 200)
 
             keys = pygame.key.get_pressed()
 
