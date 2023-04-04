@@ -218,6 +218,8 @@ class PingPong:
 
         hits = 0
         mSpeed = 5
+        allTimeHighscore = 0
+        currentScore = 0
         mSpeedHits = 0
 
         color = (255, 255, 255)
@@ -230,6 +232,10 @@ class PingPong:
             screen.fill("black")
 
             if hits >= 2:
+                currentScore += 1
+                if currentScore > allTimeHighscore:
+                    allTimeHighscore = currentScore
+                    print(allTimeHighscore)
                 balls.append({
                     "x": (width/2)-(20/2),
                     "y": (height/2)-(20/2),
@@ -248,8 +254,6 @@ class PingPong:
             for ball in balls:
                 ball["x"] += ball["vx"]
                 ball["y"] += ball["vy"]
-
-                print(f"Position {ball['x']}, {ball['y']}")
 
                 if ball["y"] <= 0 or ball["y"] >= height-bw:
                     ball["vy"] = -ball["vy"]
@@ -279,9 +283,12 @@ class PingPong:
                     if len(balls) > 0:
                         balls.pop(0)
                         print("2 balls removed")
+                        currentScore -= 2
                     if len(balls) == 0:
                         running = False
                         print("You lost")
+                        print(f"Highscore: {allTimeHighscore}")
+                        currentScore = 0
 
                 pygame.draw.rect(screen, ball["color"], pygame.Rect(
                     ball["x"], ball["y"], bw, bw))
@@ -299,7 +306,7 @@ class PingPong:
 
             pygame.display.flip()
 
-            clock.tick(100)
+            clock.tick(60)
 
         # (p1y >= ball["y"] >= (p1y + p1h) |||  ball["y"] in list(range(p1y,p1y+p1h))
     def start_fun(self):
