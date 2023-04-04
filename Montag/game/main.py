@@ -41,7 +41,7 @@ class PingPong:
         #Ball
         counter = 0
         ball_speed = 2
-        ball_dx = -ball_speed
+        ball_dx = random.choice([-ball_speed,ball_speed])
         ball_dy = random.choice([-ball_speed,ball_speed])
         ball_accel = 1
         ball_react = pygame.Rect(self.SCREEN_WIDTH // 2 - (self.ballwidth//2),self.SCREEN_HEIGHT // 2 - (self.ballheight//2),self.ballwidth,self.ballheight)
@@ -85,15 +85,24 @@ class PingPong:
             if ball_react.top <= 0 or ball_react.bottom >= self.SCREEN_HEIGHT:
                 ball_dy = -ball_dy
             #wenn ball auserhalb
-            if ball_react.x  <= 27:
+            if ball_react.x  <= self.paddlewidth - 3:
                 print("Verloren")
                 speed = 100
                 self.draw_title("Verloren",50,100)
+                color = self.BUTTON_COLOR
+                new_color = (0,0,0)
                 while ball_react.x >= 0:
                     ball_react.x += ball_dx
                     ball_react.y += ball_dy
-                    pygame.draw.rect(window, self.BUTTON_COLOR, ball_react)
+                    pygame.draw.rect(window, color, ball_react)
                     pygame.draw.rect(window, self.BUTTON_COLOR, paddle_react)
+                    
+                    color = list(color)
+                    color[0] //= 1.2
+                    color[1] //= 1.2
+                    color[2] //= 1.2
+                    color = tuple(color)
+
                     pygame.time.Clock().tick(speed)
                     pygame.display.flip()
                     if speed >= 5:
@@ -118,7 +127,7 @@ class PingPong:
         #Ball
         counter = 0
         ball_speed = 2
-        ball_dx = -ball_speed
+        ball_dx = random.choice([-ball_speed,ball_speed])
         ball_dy = random.choice([-ball_speed,ball_speed])
         ball_accel = 1
         ball_react = pygame.Rect(self.SCREEN_WIDTH // 2 - (self.ballwidth//2),self.SCREEN_HEIGHT // 2 - (self.ballheight//2),self.ballwidth,self.ballheight)
