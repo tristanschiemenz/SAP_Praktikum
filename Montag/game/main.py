@@ -3,7 +3,7 @@ import sys
 import random
 
 
-gamepath = "./Montag/game/"
+gamepath = ""
 #gamepath = ".\Montag\game\\"
 class PingPong:
     def __init__(self):
