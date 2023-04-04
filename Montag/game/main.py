@@ -3,8 +3,8 @@ import sys
 import random
 
 
-#gamepath = "./Montag/game/"
-gamepath = ".\Montag\game\\"
+gamepath = "./Montag/game/"
+#gamepath = ".\Montag\game\\"
 class PingPong:
     def __init__(self):
         pygame.init()
@@ -21,9 +21,9 @@ class PingPong:
         self.ballwidth = 20
         self.ballheight = self.ballwidth
 
-        self.sap_logo = pygame.image.load("Montag\game\sap-logo.png")
+        self.sap_logo = pygame.image.load(gamepath +"sap-logo.png")
         self.sap_logo = pygame.transform.scale(self.sap_logo,(120,40))
-        self.hit_sound = pygame.mixer.Sound("Montag\game\hitsound.mp3")
+        self.hit_sound = pygame.mixer.Sound(gamepath + "hitsound.mp3")
 
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         pygame.display.set_caption("PingPong")
@@ -40,6 +40,7 @@ class PingPong:
         paddle_react=pygame.Rect(0,self.SCREEN_HEIGHT//2 - (self.paddleheight//2),self.paddlewidth,self.paddleheight)
         #Ball
         counter = 0
+        pcounter = 0
         ball_speed = 2
         ball_dx = random.choice([-ball_speed,ball_speed])
         ball_dy = random.choice([-ball_speed,ball_speed])
@@ -72,6 +73,7 @@ class PingPong:
             if ball_react.colliderect(paddle_react) or ball_react.right >= self.SCREEN_WIDTH:
                 if ball_react.colliderect(paddle_react):
                     self.hit_sound.play()
+                    pcounter += 1
                 ball_dx = -ball_dx
                 #schneller werden
                 counter += 1
@@ -86,28 +88,7 @@ class PingPong:
                 ball_dy = -ball_dy
             #wenn ball auserhalb
             if ball_react.x  <= self.paddlewidth - 3:
-                print("Verloren")
-                speed = 100
-                self.draw_title("Verloren",50,100)
-                color = self.BUTTON_COLOR
-                new_color = (0,0,0)
-                while ball_react.x >= 0:
-                    ball_react.x += ball_dx
-                    ball_react.y += ball_dy
-                    pygame.draw.rect(window, color, ball_react)
-                    pygame.draw.rect(window, self.BUTTON_COLOR, paddle_react)
-                    
-                    color = list(color)
-                    color[0] //= 1.2
-                    color[1] //= 1.2
-                    color[2] //= 1.2
-                    color = tuple(color)
-
-                    pygame.time.Clock().tick(speed)
-                    pygame.display.flip()
-                    if speed >= 5:
-                        speed //= 1.2
-                pygame.time.Clock().tick(1)
+                self.loose(pcounter, ball_dx, ball_dy, ball_react, paddle_react,window)
                 return None
 
             pygame.draw.rect(window, self.BUTTON_COLOR, paddle_react)
@@ -177,8 +158,12 @@ class PingPong:
             if ball_react.top <= 0 or ball_react.bottom >= self.SCREEN_HEIGHT:
                 ball_dy = -ball_dy
             #wenn ball auserhalb
-            if ball_react.x  <= 0 or ball_react.x >= self.SCREEN_WIDTH:
-                print("Verloren")
+            #TODO: tune right border
+            if ball_react.x  <= self.paddlewidth - 3 or ball_react.x >= (self.SCREEN_WIDTH - self.paddlewidth) - 15:
+                paddle_react = paddle_react_p2
+                if ball_react.x  <= self.paddlewidth - 3:
+                    paddle_react = paddle_react_p1
+                self.loose(counter, ball_dx, ball_dy, ball_react, paddle_react,window)
                 return None
 
             pygame.draw.rect(window, self.BUTTON_COLOR, paddle_react_p1)
@@ -321,13 +306,36 @@ class PingPong:
         text_surface = font.render(text, True, self.TEXT_COLOR)
         text_rect = text_surface.get_rect(center=button_rect.center)
         self.screen.blit(text_surface, text_rect)
-    
+
     def draw_title(self, text, size, y_pos):
         font = pygame.font.Font(self.FONT_NAME, size)
         text_surface = font.render(text, True, self.TEXT_COLOR_TITLE)
         text_rect = text_surface.get_rect(center=(self.SCREEN_WIDTH // 2, y_pos))
         self.screen.blit(text_surface, text_rect)
 
+    def loose(self, score, ball_dx, ball_dy, ball_react, paddle_react,window):
+        print("Verloren")
+        speed = 100
+        self.draw_title("Verloren",50,100)
+        self.draw_title(f"Score: {score}",50 ,160)
+        color = self.BUTTON_COLOR
+        new_color = (0,0,0)
+        while ball_react.x >= 0 and ball_react.x <= self.SCREEN_WIDTH:
+            ball_react.x += ball_dx
+            ball_react.y += ball_dy
+            pygame.draw.rect(window, color, ball_react)
+            pygame.draw.rect(window, self.BUTTON_COLOR, paddle_react)
+            color = list(color)
+            color[0] //= 1.2
+            color[1] //= 1.2
+            color[2] //= 1.2
+            color = tuple(color)
+
+            pygame.time.Clock().tick(speed)
+            pygame.display.flip()
+            if speed >= 5:
+                speed //= 1.2
+        pygame.time.Clock().tick(1)
     def main(self):
         running = True
         #sap logo
