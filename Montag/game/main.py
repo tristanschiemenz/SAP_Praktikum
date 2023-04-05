@@ -57,8 +57,6 @@ class PingPong:
                 #verlassen
                 if event.type == pygame.QUIT:
                     running = False
-                    pygame.quit()
-                    sys.exit()
             #paddle bewegung
             presse_keys = pygame.key.get_pressed()
             if presse_keys[pygame.K_w] and paddle_react.top > 0:
@@ -129,8 +127,6 @@ class PingPong:
                 #verlassen
                 if event.type == pygame.QUIT:
                     running = False
-                    pygame.quit()
-                    sys.exit()
             #paddle bewegung P1
             presse_keys = pygame.key.get_pressed()
             #nach oben
