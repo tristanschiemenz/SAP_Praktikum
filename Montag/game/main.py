@@ -206,7 +206,7 @@ class PingPong:
         RGBMODE = True
         print(f"RGBMODE is set to {RGBMODE}!")
         p1w = self.paddlewidth
-        p1h = self.paddleheight + 200
+        p1h = self.paddleheight
         p1x = 0
         p1y = (height/2)-(p1h/2)
 
